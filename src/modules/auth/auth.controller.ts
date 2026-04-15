@@ -12,6 +12,7 @@ import {
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { LoginDto, RegisterDto } from './dto/auth.dto';
 import { JwtAuthGuard } from 'src/common/guards';
+import { CurrentUserOptional } from 'src/common/decorators/current-user-optional.decorator';
   
   @Controller('auth')
   export class AuthController {
@@ -20,9 +21,9 @@ import { JwtAuthGuard } from 'src/common/guards';
     // POST /api/v1/auth/register
     // Public — but creating admin roles requires the caller to be an admin
     @Post('register')
-    register(@Body() dto: RegisterDto, @CurrentUser() requestingUser?: User) {
-      return this.authService.register(dto, requestingUser);
-    }
+register(@Body() dto: RegisterDto, @CurrentUserOptional() requestingUser?: User) {
+  return this.authService.register(dto, requestingUser);
+}
   
     // POST /api/v1/auth/login
     @Post('login')

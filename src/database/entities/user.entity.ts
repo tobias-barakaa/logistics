@@ -24,7 +24,7 @@ import {
     email: string;
   
     @Column()
-    @Exclude() // never serialise password in API responses
+    @Exclude() 
     password: string;
   
     @Column({ type: 'enum', enum: UserRole, default: UserRole.DRIVER })
