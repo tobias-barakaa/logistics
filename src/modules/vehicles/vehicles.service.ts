@@ -54,11 +54,11 @@ export class VehiclesService {
     return this.vehicleRepo.save(vehicle);
   }
 
-  async updateStatus(id: string, dto: UpdateVehicleStatusDto): Promise<Vehicle> {
-    const vehicle = await this.findOne(id);
-    vehicle.status = dto.status;
-    return this.vehicleRepo.save(vehicle);
-  }
+//   async updateStatus(id: string, dto: UpdateVehicleStatusDto): Promise<Vehicle> {
+//     const vehicle = await this.findOne(id);
+//     vehicle.status = dto.status;
+//     return this.vehicleRepo.save(vehicle);
+//   }
 
   async remove(id: string): Promise<void> {
     const vehicle = await this.findOne(id);
