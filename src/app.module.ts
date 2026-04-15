@@ -10,6 +10,7 @@ import { RoutingModule } from './modules/routing/routing.module';
 import { TrackingModule } from './modules/tracking/tracking.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
+import { DriversModule } from './drivers/drivers.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
     TrackingModule,
     NotificationsModule,
     AnalyticsModule,
+    DriversModule,
   ],
 })
 export class AppModule {}
