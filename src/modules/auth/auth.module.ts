@@ -7,6 +7,8 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { User } from '../../database/entities/user.entity';
+import { StringValue } from 'ms';
+
 
 @Module({
   imports: [
@@ -23,9 +25,9 @@ import { User } from '../../database/entities/user.entity';
       // }),
 
       useFactory: (config: ConfigService) => ({
-        secret: config.get<string>('JWT_SECRET')!, 
+        secret: config.get<string>('JWT_SECRET')!,
         signOptions: {
-          expiresIn: config.get<string>('JWT_EXPIRES_IN') || '7d',
+          expiresIn: (config.get<string>('JWT_EXPIRES_IN') || '7d') as StringValue,
         },
       })
     }),
