@@ -60,7 +60,15 @@ import {
     @Column({ type: 'decimal', precision: 11, scale: 8 })
     deliveryLongitude: number;
   
-    @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PENDING })
+    // @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PENDING })
+    // status: OrderStatus;
+
+    @Column({
+      type: 'enum',
+      enum: OrderStatus,
+      enumName: 'order_status_enum',
+      default: OrderStatus.PENDING,
+    })
     status: OrderStatus;
   
     @Column({ nullable: true })

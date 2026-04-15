@@ -26,7 +26,14 @@ import {
     longitude: number;
   
     // Optional status snapshot at this point in time
-    @Column({ type: 'enum', enum: OrderStatus, nullable: true })
+    // @Column({ type: 'enum', enum: OrderStatus, nullable: true })
+    // statusSnapshot: OrderStatus;
+    @Column({
+      type: 'enum',
+      enum: OrderStatus,
+      enumName: 'order_status_enum', 
+      nullable: true,
+    })
     statusSnapshot: OrderStatus;
   
     // Human-readable note e.g. "Driver picked up package"
