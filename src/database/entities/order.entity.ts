@@ -13,16 +13,8 @@ import {
 
   import { TrackingEvent } from './tracking-event.entity';
   import { Driver } from './driver.entity';
+import { OrderStatus } from 'src/common/enums/order-status.enum';
   
-  export enum OrderStatus {
-    PENDING = 'pending',       // created, not yet assigned
-    ASSIGNED = 'assigned',     // driver assigned, not yet picked up
-    PICKED_UP = 'picked_up',   // driver confirmed pickup
-    IN_TRANSIT = 'in_transit', // en-route to delivery
-    DELIVERED = 'delivered',   // successfully delivered
-    FAILED = 'failed',         // delivery attempted but failed
-    CANCELLED = 'cancelled',   // cancelled before pickup
-  }
   
   @Entity('orders')
   export class Order {
@@ -60,8 +52,6 @@ import {
     @Column({ type: 'decimal', precision: 11, scale: 8 })
     deliveryLongitude: number;
   
-    // @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PENDING })
-    // status: OrderStatus;
 
     @Column({
       type: 'enum',

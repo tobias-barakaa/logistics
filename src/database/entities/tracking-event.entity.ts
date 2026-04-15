@@ -7,7 +7,7 @@ import {
     JoinColumn,
   } from 'typeorm';
   import { Order } from './order.entity';
-  import { OrderStatus } from './order.entity';
+import { OrderStatus } from 'src/common/enums/order-status.enum';
   
   @Entity('tracking_events')
   export class TrackingEvent {
@@ -25,9 +25,7 @@ import {
     @Column({ type: 'decimal', precision: 11, scale: 8 })
     longitude: number;
   
-    // Optional status snapshot at this point in time
-    // @Column({ type: 'enum', enum: OrderStatus, nullable: true })
-    // statusSnapshot: OrderStatus;
+   
     @Column({
       type: 'enum',
       enum: OrderStatus,
