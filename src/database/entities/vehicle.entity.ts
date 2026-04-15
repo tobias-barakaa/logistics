@@ -52,6 +52,8 @@ import {
     // Reverse side of the Driver → Vehicle relation
     @OneToOne(() => Driver, (driver) => driver.vehicle)
     driver: Driver;
+
+    
   
     @CreateDateColumn()
     createdAt: Date;

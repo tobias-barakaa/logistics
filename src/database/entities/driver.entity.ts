@@ -11,6 +11,7 @@ import {
   import { User } from './user.entity';
   import { Vehicle } from './vehicle.entity';
 import { Order } from './order.entity';
+import { DriverApprovalStatus } from 'src/common/enums/driver-approval.enum';
   
   export enum DriverStatus {
     ONLINE = 'online',
@@ -55,6 +56,13 @@ import { Order } from './order.entity';
   
     @OneToMany(() => Order, (order) => order.driver)
     orders: Order[];
+
+    @Column({
+      type: 'enum',
+      enum: DriverApprovalStatus,
+      default: DriverApprovalStatus.PENDING,
+    })
+    approvalStatus: DriverApprovalStatus;
   
     @CreateDateColumn()
     createdAt: Date;
