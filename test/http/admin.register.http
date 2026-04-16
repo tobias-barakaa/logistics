@@ -4,7 +4,7 @@ Content-Type: application/json
 {
   "name": "Test User",
   "email": "tobiasbarakan@gmail.com",
-  "password": "password123",
-  "role": "ADMIN"
+  "password": "",
+  "role": "admin"
 }
 

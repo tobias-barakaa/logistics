@@ -1,5 +1,4 @@
-### Create complete driver profile with vehicle
-# @name createCompleteDriverProfile
+### Create complete driver profile
 POST http://localhost:3000/api/v1/driver/profile
 Content-Type: application/json
 Cookie: access_token={{access_token}}
@@ -9,19 +8,11 @@ Cookie: access_token={{access_token}}
   "status": "online",
   "currentLatitude": -1.286389,
   "currentLongitude": 36.817223,
-  "phone": "+254712345678",
-  "emergencyContactName": "Jane Doe",
-  "emergencyContactPhone": "+254798765432",
-  "bankName": "KCB Bank",
-  "bankAccountNumber": "1234567890",
-  "bankAccountName": "John Driver",
   "vehicle": {
-    "make": "Toyota",
+    "plateNumber": "KCA123A",
     "model": "Probox",
+    "type": "pickup",
     "year": 2020,
-    "licensePlate": "KCA 123A",
-    "color": "White",
-    "insuranceNumber": "INS123456",
-    "registrationNumber": "REG123456"
+    "capacityKg": 500
   }
 }
