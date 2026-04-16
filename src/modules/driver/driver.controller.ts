@@ -21,12 +21,13 @@ export class DriverController {
   constructor(private readonly driverService: DriverService) {}
 
   @Post('profile')
+  @UseGuards(RolesGuard) 
   @Roles(UserRole.DRIVER)
-  @UseGuards(RolesGuard)
   createDriverProfile(
     @CurrentUser() user: User,
     @Body() dto: CreateDriverProfileDto,
   ) {
+    console.log(`not reached here yet....${user}`)
     return this.driverService.createDriverProfile(user, dto);
   }
 

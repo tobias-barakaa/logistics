@@ -3,8 +3,8 @@ Content-Type: application/json
 
 {
   "name": "Test User",
-  "email": "tobiasbarakan@gmail.com",
-  "password": "",
-  "role": "admin"
+  "email": "tobiasbarakah@gmail.com",
+  "password": "password123",
+  "role": "driver"
 }
 
