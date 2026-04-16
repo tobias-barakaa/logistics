@@ -51,6 +51,7 @@ import { CurrentUser } from 'src/common/decorators/current-user.decorator';
     approveDriver(@Param('id', ParseUUIDPipe) id: string) {
       return this.adminService.approveDriver(id);
     }
+    
   
     // PATCH /api/v1/admin/drivers/:id/reject
     // Body: { "reason": "License number could not be verified" }
