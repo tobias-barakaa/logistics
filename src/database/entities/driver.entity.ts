@@ -63,6 +63,10 @@ import { DriverApprovalStatus } from 'src/common/enums/driver-approval.enum';
       default: DriverApprovalStatus.PENDING,
     })
     approvalStatus: DriverApprovalStatus;
+
+    @Column({ nullable: true, type: 'text' })
+    rejectionReason: string | null;
+
   
     @CreateDateColumn()
     createdAt: Date;

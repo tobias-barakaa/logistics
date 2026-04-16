@@ -11,6 +11,8 @@ import { TrackingModule } from './modules/tracking/tracking.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { DriversModule } from './drivers/drivers.module';
+import { AdminDriversModule } from './modules/admin/admin-drivers/admin-drivers.module';
+// import { AdminDriversModule } from './admin/admin-drivers/admin-drivers.module';
 
 @Module({
   imports: [
@@ -49,6 +51,7 @@ import { DriversModule } from './drivers/drivers.module';
     NotificationsModule,
     AnalyticsModule,
     DriversModule,
+    AdminDriversModule,
   ],
 })
 export class AppModule {}
