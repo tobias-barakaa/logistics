@@ -13,9 +13,10 @@ import {
   import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
   import { RolesGuard } from 'src/common/guards/roles.guard';
   import { Roles } from 'src/common/decorators/roles.decorator';
-  import { UserRole } from 'src/database/entities/user.entity';
+  import { User, UserRole } from 'src/database/entities/user.entity';
 import { ListDriversQueryDto, RejectDriverDto } from './dto/admin-driver.dto';
 import { AdminDriverService } from './admin-drivers.service';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
   
   // Every route in this controller requires:
   // 1. A valid JWT cookie (JwtAuthGuard)
@@ -31,7 +32,9 @@ import { AdminDriverService } from './admin-drivers.service';
     // GET /api/v1/admin/drivers?approvalStatus=approved
     // GET /api/v1/admin/drivers?approvalStatus=rejected
     @Get('drivers')
-    listDrivers(@Query() query: ListDriversQueryDto) {
+    
+    listDrivers(@CurrentUser() user: User, @Query() query: ListDriversQueryDto) {
+        console.log(user)
       return this.adminService.listDrivers(query);
     }
   
@@ -60,3 +63,15 @@ import { AdminDriverService } from './admin-drivers.service';
       return this.adminService.rejectDriver(id, dto);
     }
   }
+
+
+//    @Post('profile')
+//     @UseGuards(RolesGuard) 
+//     @Roles(UserRole.DRIVER)
+//     createDriverProfile(
+//       @CurrentUser() user: User,
+//       @Body() dto: CreateDriverProfileDto,
+//     ) {
+//       console.log(`not reached here yet....${user}`)
+//       return this.driverService.createDriverProfile(user, dto);
+//     }

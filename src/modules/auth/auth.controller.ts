@@ -7,63 +7,84 @@ import {
   HttpStatus,
   UseGuards,
   Res,
+  ValidationPipe,
 } from '@nestjs/common';
-import type { Response } from 'express';
+import express from 'express';
+import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
-import { LoginDto, RegisterDto } from './dto/auth.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { User } from '../../database/entities/user.entity';
-import { ConfigService } from '@nestjs/config';
+import { LoginDto, RegisterDto } from './dto/auth.dto';
+import { UserResponseDto } from './dto/auth.response.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly config: ConfigService,
+    private readonly configService: ConfigService,
   ) {}
 
-  // POST /api/v1/auth/register
+  /**
+   * Register a new driver account
+   * Role is automatically assigned as DRIVER
+   */
   @Post('register')
-  register(@Body() dto: RegisterDto) {
-    return this.authService.register(dto);
+  @HttpCode(HttpStatus.CREATED)
+  async register(@Body(ValidationPipe) registerDto: RegisterDto) {
+    const { user, token } = await this.authService.register(registerDto);
+    return { user, message: 'Registration successful' };
   }
 
-  // POST /api/v1/auth/login
-  // Sets token as an HttpOnly cookie — JS on the page cannot read it.
+  /**
+   * Login for existing users (both DRIVER and ADMIN)
+   * Sets JWT token as HTTP-only cookie
+   */
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(
-    @Body() dto: LoginDto,
-    @Res({ passthrough: true }) res: Response,
+    @Body(ValidationPipe) loginDto: LoginDto,
+    @Res({ passthrough: true }) response: express.Response,
   ) {
-    const result = await this.authService.login(dto);
+    const { user, token } = await this.authService.login(loginDto);
 
-    const isProd = this.config.get<string>('NODE_ENV') === 'production';
+    const isProduction = this.configService.get('NODE_ENV') === 'production';
 
-    res.cookie('access_token', result.token, {
-      httpOnly: true,     // JS on the page can never read this cookie
-      secure: isProd,     // HTTPS only in production
-      sameSite: 'strict', // blocks cookie on cross-origin requests — kills CSRF
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms, matches JWT_EXPIRES_IN
+    // Set cookie with secure options
+    response.cookie('access_token', token, {
+      httpOnly: true,      // Prevents XSS attacks
+      secure: isProduction, // HTTPS only in production
+      sameSite: 'strict',   // Prevents CSRF attacks
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      path: '/',
     });
 
-    // Return the user object but NOT the token — frontend never needs to see it
-    return { user: result.user };
+    return { user };
   }
 
-  // POST /api/v1/auth/logout
+  /**
+   * Logout user by clearing the access token cookie
+   */
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  logout(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie('access_token');
-    return { message: 'Logged out' };
+  @UseGuards(JwtAuthGuard)
+  async logout(@Res({ passthrough: true }) response: express.Response) {
+    response.clearCookie('access_token', {
+      httpOnly: true,
+      secure: this.configService.get('NODE_ENV') === 'production',
+      sameSite: 'strict',
+      path: '/',
+    });
+    
+    return { message: 'Logged out successfully' };
   }
 
-  // GET /api/v1/auth/me
+  /**
+   * Get current authenticated user's profile
+   */
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  getProfile(@CurrentUser() user: User) {
+  async getProfile(@CurrentUser() user: User): Promise<UserResponseDto> {
     return this.authService.getProfile(user.id);
   }
 }

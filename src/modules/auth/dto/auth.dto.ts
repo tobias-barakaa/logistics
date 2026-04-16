@@ -2,12 +2,13 @@ import { IsEmail, IsString, MinLength, IsEnum, IsOptional } from 'class-validato
 import { UserRole } from '../../../database/entities/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
+
 export class LoginDto {
-  @IsEmail()
+  @IsEmail({}, { message: 'Please provide a valid email address' })
   email: string;
 
   @IsString()
-  @MinLength(6)
+  @MinLength(1, { message: 'Password is required' })
   password: string;
 }
 
@@ -53,4 +54,5 @@ export class RegisterDto {
   @IsOptional()
   @IsEnum(UserRole)
   role?: UserRole;
-}
+};
+

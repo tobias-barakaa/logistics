@@ -2,12 +2,15 @@ import {
   Injectable,
   UnauthorizedException,
   ConflictException,
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { User, UserRole } from '../../database/entities/user.entity';
+import { UserMapper } from './mappers/user.mapper';
+import { UserResponseDto } from './dto/auth.response.dto';
 import { LoginDto, RegisterDto } from './dto/auth.dto';
 
 @Injectable()
@@ -18,53 +21,94 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  // Public registration — creates DRIVER accounts only.
-  // Admin accounts are created exclusively via: npm run seed:admin
-  async register(dto: RegisterDto) {
-    const existing = await this.userRepository.findOne({
-      where: { email: dto.email },
+  /**
+   * Register a new driver account
+   * Role is automatically set to DRIVER - no role field accepted in request
+   */
+  async register(registerDto: RegisterDto): Promise<{ user: UserResponseDto; token: string }> {
+    // Check if email already exists
+    const existingUser = await this.userRepository.findOne({
+      where: { email: registerDto.email },
     });
-    if (existing) throw new ConflictException('Email is already registered');
+    
+    if (existingUser) {
+      throw new ConflictException('Email is already registered');
+    }
 
-    const hashed = await bcrypt.hash(dto.password, 10);
+    // Hash password
+    const hashedPassword = await bcrypt.hash(registerDto.password, 10);
 
-    // Force role to DRIVER regardless of what was sent in the body.
-    // No API caller can ever self-promote to admin.
+    // Create user with EXPLICIT field mapping (never use spread on DTO!)
     const user = this.userRepository.create({
-      ...dto,
-      password: hashed,
-      role: UserRole.DRIVER,
+      email: registerDto.email,
+      name: registerDto.name,
+      password: hashedPassword,
+      role: UserRole.DRIVER, 
+      isActive: true,
     });
-    const saved = await this.userRepository.save(user);
 
-    const { password, ...safeUser } = saved;
-    return { user: safeUser, token: this.signToken(saved) };
+    const savedUser = await this.userRepository.save(user);
+    
+    // Generate token
+    const token = this.signToken(savedUser);
+    
+    // Return safe user object without password
+    return {
+      user: UserMapper.toResponseDto(savedUser),
+      token,
+    };
   }
 
-  async login(dto: LoginDto) {
+  /**
+   * Login for all user types (DRIVER, ADMIN, etc.)
+   */
+  async login(loginDto: LoginDto): Promise<{ user: UserResponseDto; token: string }> {
     const user = await this.userRepository.findOne({
-      where: { email: dto.email, isActive: true },
+      where: { email: loginDto.email, isActive: true },
     });
 
-    if (!user || !(await bcrypt.compare(dto.password, user.password))) {
+    if (!user) {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    const { password, ...safeUser } = user;
-    return { user: safeUser, token: this.signToken(user) };
+    const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    const token = this.signToken(user);
+    
+    return {
+      user: UserMapper.toResponseDto(user),
+      token,
+    };
   }
 
-  async getProfile(id: string): Promise<Omit<User, 'password'>> {
-    const user = await this.userRepository.findOneOrFail({ where: { id } });
-    const { password, ...safeUser } = user;
-    return safeUser;
+  /**
+   * Get user profile by ID (excluding password)
+   */
+  async getProfile(userId: string): Promise<UserResponseDto> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId, isActive: true },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    return UserMapper.toResponseDto(user);
   }
 
+  /**
+   * Generate JWT token for authenticated user
+   */
   private signToken(user: User): string {
-    return this.jwtService.sign({
+    const payload = {
       sub: user.id,
       email: user.email,
       role: user.role,
-    });
+    };
+    
+    return this.jwtService.sign(payload);
   }
 }
