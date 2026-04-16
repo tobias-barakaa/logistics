@@ -3,6 +3,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import cookieParser from 'cookie-parser';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -25,6 +27,17 @@ async function bootstrap() {
     origin: config.get<string>('FRONTEND_URL', 'http://localhost:3001'),
     credentials: true,
   });
+
+  const configSwagger = new DocumentBuilder()
+    .setTitle('Logistics API')
+    .setDescription('Driver, Vehicle, Order Management API')
+    .setVersion('1.0')
+    .addBearerAuth() 
+    .build();
+
+  const document = SwaggerModule.createDocument(app, configSwagger);
+
+  SwaggerModule.setup('docs', app, document);
 
   const port = config.get<number>('PORT', 3000);
   await app.listen(port);
