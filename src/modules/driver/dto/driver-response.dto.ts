@@ -17,3 +17,16 @@ export class DriverResponseDto {
   createdAt: Date;
   updatedAt: Date;
 }
+
+
+// export class DriverResponseDto {
+//     id: string;
+//     licenseNumber?: string;
+//     status: DriverStatus;
+//     approvalStatus: DriverApprovalStatus;
+  
+//     user: User;
+//     vehicle?: Vehicle;
+  
+//     orders: Order[]; 
+//   }

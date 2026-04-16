@@ -262,19 +262,34 @@ export class DriverService {
   }
 
   private async getDriverWithRelations(id: string): Promise<Driver> {
-    return await this.driverRepository.findOne({
+    const driver = await this.driverRepository.findOne({
       where: { id },
       relations: ['user', 'vehicle', 'orders'],
     });
+  
+    if (!driver) {
+      throw new NotFoundException('Driver not found');
+    }
+  
+    return driver;
   }
 
   private mapToResponseDto(driver: Driver): DriverResponseDto {
     const { user, vehicle, orders, ...rest } = driver;
+  
     return {
       ...rest,
       user,
       vehicle: vehicle || undefined,
-      orders: orders || [],
     };
   }
+//   private mapToResponseDto(driver: Driver): DriverResponseDto {
+//     const { user, vehicle, orders, ...rest } = driver;
+//     return {
+//       ...rest,
+//       user,
+//       vehicle: vehicle || undefined,
+//       orders: orders || [],
+//     };
+//   }
 }
