@@ -14,9 +14,9 @@ import { OrderStatus } from 'src/common/enums/order-status.enum';
     @PrimaryGeneratedColumn('uuid')
     id: string;
   
-    @ManyToOne(() => Order, (order) => order.trackingEvents, { onDelete: 'CASCADE' })
-    @JoinColumn()
-    order: Order;
+    // @ManyToOne(() => Order, (order) => order.trackingEvents, { onDelete: 'CASCADE' })
+    // @JoinColumn()
+    // order: Order;
   
     // GPS coordinates at time of event
     @Column({ type: 'decimal', precision: 10, scale: 8 })

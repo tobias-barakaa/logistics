@@ -1,0 +1,12 @@
+@baseUrl = http://localhost:3000/api/v1
+@access_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNWQ5NTUwYS1jZmI3LTQxNjUtODg2MC1iZjVlYzI5ZTVkNjEiLCJlbWFpbCI6InRvYmlhc2JhcmFrYW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc2MzMwNzg0LCJleHAiOjE3NzY5MzU1ODR9.wNquPY2vZK0esHvEEbzxA4vAavi_mO2iRu1LlaRNxfQ
+@driverId = a17c6e00-92b8-406f-a94c-57ab373b7789
+### Get all drivers
+PATCH {{baseUrl}}/admin/drivers/{{driverId}}/reject
+Content-Type: application/json
+Cookie: access_token={{access_token}}
+
+
+{
+  "reason": "Driver submitted invalid license documents"
+}

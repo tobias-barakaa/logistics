@@ -7,7 +7,7 @@ import {
     CreateDateColumn,
   } from 'typeorm';
   import { Order } from './order.entity';
-  import { ImageType, UploadedBy } from 'src/common/enums/order-image.enum';
+import { ImageType, UploadedBy } from 'src/common/enums/order-image.enum';
   
   @Entity('order_images')
   export class OrderImage {

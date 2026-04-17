@@ -29,7 +29,7 @@ import {
   import { CurrentUser } from 'src/common/decorators/current-user.decorator';
   import { UserRole } from 'src/database/entities/user.entity';
   import { User } from 'src/database/entities/user.entity';
-  import { UploadedBy } from 'src/common/enums/order-image.enum';
+import { UploadedBy } from 'src/common/enums/order-image.enum';
   
   @Controller('orders')
   @UseGuards(JwtAuthGuard)

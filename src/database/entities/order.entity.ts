@@ -10,12 +10,12 @@ import {
   BeforeInsert,
 } from 'typeorm';
 import { Driver } from './driver.entity';
-import { OrderItem } from './order-item.entity';
 import { OrderImage } from './order-image.entity';
-import { OrderStatusHistory } from './order-status-history.entity';
 import { OrderStatus } from 'src/common/enums/order-status.enum';
-import { PaymentStatus, PaymentMethod } from 'src/common/enums/payment.enum';
-import { OrderPriority } from 'src/common/enums/order-priority.enum';
+import { OrderPriority } from 'src/common/enums/order-image.enum';
+import { PaymentMethod, PaymentStatus } from 'src/common/enums/payment.enum';
+import { OrderItem } from './order.item.entity';
+import { OrderStatusHistory } from './order-status-history.entity';
 
 @Entity('orders')
 export class Order {

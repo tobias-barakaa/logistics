@@ -3,10 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrdersController } from './orders.controller';
 import { OrdersService } from './orders.service';
 import { Order } from 'src/database/entities/order.entity';
-import { OrderItem } from 'src/database/entities/order-item.entity';
 import { OrderImage } from 'src/database/entities/order-image.entity';
-import { OrderStatusHistory } from 'src/database/entities/order-status-history.entity';
 import { Driver } from 'src/database/entities/driver.entity';
+import { OrderItem } from 'src/database/entities/order.item.entity';
+import { OrderStatusHistory } from 'src/database/entities/order-status-history.entity';
 
 @Module({
   imports: [

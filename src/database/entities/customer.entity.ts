@@ -3,8 +3,8 @@ import {
     PrimaryGeneratedColumn,
     Column,
     CreateDateColumn,
-    UpdateDateColumn,
-    OneToMany,
+    UpdateDateColumn
+    
   } from 'typeorm';
 import { Order } from './order.entity';
   
@@ -35,8 +35,8 @@ import { Order } from './order.entity';
     @Column({ default: true })
     isActive: boolean;
   
-    @OneToMany(() => Order, (order) => order.customer)
-    orders: Order[];
+    // @OneToMany(() => Order, (order) => order.customer)
+    // orders: Order[];
   
     @CreateDateColumn()
     createdAt: Date;

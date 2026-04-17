@@ -16,9 +16,7 @@ import {
     Not,
   } from 'typeorm';
   import { Order } from 'src/database/entities/order.entity';
-  import { OrderItem } from 'src/database/entities/order-item.entity';
   import { OrderImage } from 'src/database/entities/order-image.entity';
-  import { OrderStatusHistory } from 'src/database/entities/order-status-history.entity';
   import { Driver } from 'src/database/entities/driver.entity';
   import { User } from 'src/database/entities/user.entity';
   import {
@@ -27,7 +25,6 @@ import {
   } from 'src/common/enums/order-status.enum';
   import { DriverApprovalStatus } from 'src/common/enums/driver-approval.enum';
   import { DriverStatus } from 'src/database/entities/driver.entity';
-  import { ImageType, UploadedBy } from 'src/common/enums/order-image.enum';
   import {
     CreateOrderDto,
     UpdateOrderDto,
@@ -38,6 +35,9 @@ import {
     CreateOrderItemDto,
     CreateOrderImageDto,
   } from './dto/orders.dto';
+import { OrderItem } from 'src/database/entities/order.item.entity';
+import { OrderStatusHistory } from 'src/database/entities/order-status-history.entity';
+import { ImageType, UploadedBy } from 'src/common/enums/order-image.enum';
   
   const ORDER_RELATIONS = ['driver', 'driver.user', 'items', 'images', 'statusHistory'];
   

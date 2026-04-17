@@ -10,6 +10,7 @@ import {
   export enum UserRole {
     ADMIN = 'admin',
     DRIVER = 'driver',
+    CLIENT = 'client'
   }
   
   @Entity('users')
