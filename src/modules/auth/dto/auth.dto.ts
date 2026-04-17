@@ -20,7 +20,6 @@ export class RegisterDto {
   @IsString()
   name: string;
 
-
   @ApiProperty({
     example: 'test@example.com',
     description: 'User email address',
@@ -38,21 +37,23 @@ export class RegisterDto {
   password: string;
 
   @ApiProperty({
-    example: '254724676742',
-    minLength: 12,
-    description: 'User PhoneNumber',
+    example: '+254724676742',
+    description: 'Phone Number',
+    required: false,
   })
   @IsOptional()
   @IsString()
   phone?: string;
 
   @ApiProperty({
-    example: 'Admin',
-    minLength: 8,
-    description: 'Admin',
+    enum: [UserRole.DRIVER, UserRole.CLIENT],
+    example: UserRole.CLIENT,
+    required: false,
+    description: 'Role must be driver or client',
   })
   @IsOptional()
-  @IsEnum(UserRole)
+  @IsEnum(UserRole, {
+    message: 'Role must be either driver or client',
+  })
   role?: UserRole;
-};
-
+}

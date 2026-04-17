@@ -34,6 +34,9 @@ import { AdminDriversModule } from './modules/admin/admin-drivers/admin-drivers.
         synchronize: config.get<string>('NODE_ENV') === 'development',
         logging: config.get<string>('NODE_ENV') === 'development',
         // Neon requires SSL
+
+        dropSchema: config.get<string>('DROP_SCHEMA') === 'false',
+
         ssl:
           config.get<string>('DB_SSL') === 'true'
             ? { rejectUnauthorized: false }

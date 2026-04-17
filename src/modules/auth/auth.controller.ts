@@ -29,12 +29,36 @@ export class AuthController {
    * Register a new driver account
    * Role is automatically assigned as DRIVER
    */
+  // @Post('register')
+  // @HttpCode(HttpStatus.CREATED)
+  // async register(@Body(ValidationPipe) registerDto: RegisterDto) {
+  //   const { user, token } = await this.authService.register(registerDto);
+  //   return { user, message: 'Registration successful' };
+  // }
+
   @Post('register')
-  @HttpCode(HttpStatus.CREATED)
-  async register(@Body(ValidationPipe) registerDto: RegisterDto) {
-    const { user, token } = await this.authService.register(registerDto);
-    return { user, message: 'Registration successful' };
-  }
+@HttpCode(HttpStatus.CREATED)
+async register(
+  @Body(new ValidationPipe()) registerDto: RegisterDto,
+  @Res({ passthrough: true }) response: express.Response,
+) {
+  const { user, token } = await this.authService.register(registerDto);
+
+  const isProduction = this.configService.get('NODE_ENV') === 'production';
+
+  response.cookie('access_token', token, {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: 'strict',
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    path: '/',
+  });
+
+  return {
+    user,
+    message: 'Registration successful',
+  };
+}
 
   /**
    * Login for existing users (both DRIVER and ADMIN)

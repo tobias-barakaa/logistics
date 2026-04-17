@@ -3,6 +3,7 @@ import {
   UnauthorizedException,
   ConflictException,
   BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -25,43 +26,53 @@ export class AuthService {
    * Register a new driver account
    * Role is automatically set to DRIVER - no role field accepted in request
    */
-  async register(registerDto: RegisterDto): Promise<{ user: UserResponseDto; token: string }> {
-    // Check if email already exists
+  async register(
+    registerDto: RegisterDto,
+  ): Promise<{ user: UserResponseDto; token: string }> {
     const existingUser = await this.userRepository.findOne({
       where: { email: registerDto.email },
     });
-    
+  
     if (existingUser) {
       throw new ConflictException('Email is already registered');
     }
-
-    // Hash password
+  
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
-
-    // Create user with EXPLICIT field mapping (never use spread on DTO!)
+  
+    // default role
+    let role = UserRole.CLIENT;
+  
+    // allow only driver or client
+    if (registerDto.role === UserRole.DRIVER) {
+      role = UserRole.DRIVER;
+    }
+  
+    if (
+      registerDto.role &&
+      ![UserRole.DRIVER, UserRole.CLIENT].includes(registerDto.role)
+    ) {
+      throw new ForbiddenException('Invalid role selection');
+    }
+  
     const user = this.userRepository.create({
-      email: registerDto.email,
       name: registerDto.name,
+      email: registerDto.email,
       password: hashedPassword,
-      role: UserRole.DRIVER, 
+      role,
       isActive: true,
     });
-
+  
     const savedUser = await this.userRepository.save(user);
-    
-    // Generate token
+  
     const token = this.signToken(savedUser);
-    
-    // Return safe user object without password
+  
     return {
       user: UserMapper.toResponseDto(savedUser),
       token,
     };
   }
 
-  /**
-   * Login for all user types (DRIVER, ADMIN, etc.)
-   */
+
   async login(loginDto: LoginDto): Promise<{ user: UserResponseDto; token: string }> {
     const user = await this.userRepository.findOne({
       where: { email: loginDto.email, isActive: true },
