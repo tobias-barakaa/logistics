@@ -12,6 +12,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { DriversModule } from './drivers/drivers.module';
 import { AdminDriversModule } from './modules/admin/admin-drivers/admin-drivers.module';
+import { AdminModule } from './modules/admin/admin.module';
 // import { AdminDriversModule } from './admin/admin-drivers/admin-drivers.module';
 
 @Module({
@@ -35,7 +36,7 @@ import { AdminDriversModule } from './modules/admin/admin-drivers/admin-drivers.
         logging: config.get<string>('NODE_ENV') === 'development',
         // Neon requires SSL
 
-        dropSchema: config.get<string>('DROP_SCHEMA') === 'false',
+        dropSchema: config.get<string>('DROP_SCHEMA') === 'true',
 
         ssl:
           config.get<string>('DB_SSL') === 'true'
@@ -53,8 +54,7 @@ import { AdminDriversModule } from './modules/admin/admin-drivers/admin-drivers.
     TrackingModule,
     NotificationsModule,
     AnalyticsModule,
-    DriversModule,
-    AdminDriversModule,
+    AdminModule,
   ],
 })
 export class AppModule {}

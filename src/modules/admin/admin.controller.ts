@@ -11,14 +11,6 @@ import {
     HttpCode,
     HttpStatus,
   } from '@nestjs/common';
-  import { AdminService } from './admin.service';
-  import {
-    RejectDriverDto,
-    ListDriversQueryDto,
-    AdminListOrdersDto,
-    AdminCancelOrderDto,
-    AdminAddNoteDto,
-  } from './dto/admin.dto';
   import { AssignDriverDto } from 'src/modules/orders/dto/orders.dto';
   import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
   import { RolesGuard } from 'src/common/guards/roles.guard';
@@ -26,6 +18,8 @@ import {
   import { CurrentUser } from 'src/common/decorators/current-user.decorator';
   import { UserRole } from 'src/database/entities/user.entity';
   import { User } from 'src/database/entities/user.entity';
+import { AdminService } from './admin.service';
+import { AdminAddNoteDto, AdminCancelOrderDto, AdminListOrdersDto, ListDriversQueryDto, RejectDriverDto } from './admin.dto';
   
   @Controller('admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -76,39 +70,39 @@ import {
     // PATCH /api/v1/admin/orders/:id/assign
     // Body: { "driverId": "uuid", "estimatedDeliveryTime": "2026-04-18T14:00:00Z" }
     // Moves order PENDING → ASSIGNED
-    @Patch('orders/:id/assign')
-    @HttpCode(HttpStatus.OK)
-    assignDriver(
-      @Param('id', ParseUUIDPipe) id: string,
-      @Body() dto: AssignDriverDto,
-      @CurrentUser() actor: User,
-    ) {
-      return this.adminService.assignDriver(id, dto, actor);
-    }
+    // @Patch('orders/:id/assign')
+    // @HttpCode(HttpStatus.OK)
+    // assignDriver(
+    //   @Param('id', ParseUUIDPipe) id: string,
+    //   @Body() dto: AssignDriverDto,
+    //   @CurrentUser() actor: User,
+    // ) {
+    //   return this.adminService.assignDriver(id, dto, actor);
+    // }
   
-    // PATCH /api/v1/admin/orders/:id/cancel
-    // Body: { "reason": "Customer requested cancellation" }
-    @Patch('orders/:id/cancel')
-    @HttpCode(HttpStatus.OK)
-    cancelOrder(
-      @Param('id', ParseUUIDPipe) id: string,
-      @Body() dto: AdminCancelOrderDto,
-      @CurrentUser() actor: User,
-    ) {
-      return this.adminService.cancelOrder(id, dto, actor);
-    }
+    // // PATCH /api/v1/admin/orders/:id/cancel
+    // // Body: { "reason": "Customer requested cancellation" }
+    // @Patch('orders/:id/cancel')
+    // @HttpCode(HttpStatus.OK)
+    // cancelOrder(
+    //   @Param('id', ParseUUIDPipe) id: string,
+    //   @Body() dto: AdminCancelOrderDto,
+    //   @CurrentUser() actor: User,
+    // ) {
+    //   return this.adminService.cancelOrder(id, dto, actor);
+    // }
   
-    // POST /api/v1/admin/orders/:id/notes
-    // Body: { "note": "Customer called to confirm address" }
-    // Appends a timestamped note — doesn't overwrite previous notes
-    @Post('orders/:id/notes')
-    addNote(
-      @Param('id', ParseUUIDPipe) id: string,
-      @Body() dto: AdminAddNoteDto,
-      @CurrentUser() actor: User,
-    ) {
-      return this.adminService.addAdminNote(id, dto, actor);
-    }
+    // // POST /api/v1/admin/orders/:id/notes
+    // // Body: { "note": "Customer called to confirm address" }
+    // // Appends a timestamped note — doesn't overwrite previous notes
+    // @Post('orders/:id/notes')
+    // addNote(
+    //   @Param('id', ParseUUIDPipe) id: string,
+    //   @Body() dto: AdminAddNoteDto,
+    //   @CurrentUser() actor: User,
+    // ) {
+    //   return this.adminService.addAdminNote(id, dto, actor);
+    // }
   
     // ── Drivers ────────────────────────────────────────────────────────────────
   

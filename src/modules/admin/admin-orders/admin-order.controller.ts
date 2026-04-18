@@ -9,14 +9,14 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { User } from 'src/database/entities/user.entity';
 import { CreateOrderDto } from 'src/modules/orders/dto/orders.dto';
-import { OrdersService } from './admin-order.service';
+import { AdminOrdersService } from './admin-order.service';
 
 // This controller handles what any authenticated user can do with orders.
 // Admin management (list all, assign, cancel, status) lives in AdminController.
 @Controller('orders')
 @UseGuards(JwtAuthGuard)
 export class OrdersController {
-  constructor(private readonly ordersService: OrdersService) {}
+  constructor(private readonly ordersService: AdminOrdersService) {}
 
   // POST /api/v1/orders
   // Any logged-in user — client, driver, or admin — can submit an order.

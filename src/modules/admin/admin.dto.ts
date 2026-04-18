@@ -12,7 +12,7 @@ import {
   import { Type } from 'class-transformer';
   import { DriverApprovalStatus } from 'src/common/enums/driver-approval.enum';
   import { OrderStatus } from 'src/common/enums/order-status.enum';
-  import { OrderPriority } from 'src/common/enums/order-priority.enum';
+import { OrderPriority } from 'src/common/enums/order-image.enum';
   
   // ── Drivers ────────────────────────────────────────────────────────────────────
   

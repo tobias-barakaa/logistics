@@ -9,7 +9,6 @@ import {
 } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Order } from 'src/database/entities/order.entity';
-import { OrderItem } from 'src/database/entities/order-item.entity';
 import { OrderImage } from 'src/database/entities/order-image.entity';
 import { OrderStatusHistory } from 'src/database/entities/order-status-history.entity';
 import { Driver } from 'src/database/entities/driver.entity';
@@ -20,16 +19,8 @@ import {
 } from 'src/common/enums/order-status.enum';
 import { DriverApprovalStatus } from 'src/common/enums/driver-approval.enum';
 import { ImageType, UploadedBy } from 'src/common/enums/order-image.enum';
-import {
-  CreateOrderDto,
-  UpdateOrderDto,
-  AssignDriverDto,
-  CancelOrderDto,
-  UpdateOrderStatusDto,
-  FilterOrdersDto,
-  CreateOrderItemDto,
-  CreateOrderImageDto,
-} from './dto/orders.dto';
+import { OrderItem } from 'src/database/entities/order.item.entity';
+import { AssignDriverDto, CancelOrderDto, CreateOrderDto, CreateOrderImageDto, CreateOrderItemDto, FilterOrdersDto, UpdateOrderDto, UpdateOrderStatusDto } from 'src/modules/orders/dto/orders.dto';
 
 const ORDER_RELATIONS = [
   'submittedBy',
@@ -41,7 +32,7 @@ const ORDER_RELATIONS = [
 ];
 
 @Injectable()
-export class OrdersService {
+export class AdminOrdersService {
   constructor(
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
