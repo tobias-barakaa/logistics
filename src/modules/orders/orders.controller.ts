@@ -42,7 +42,7 @@ import { UploadedBy } from 'src/common/enums/order-image.enum';
     // Admin only — orders are created by admin, not by customers in this system
     @Post()
     @UseGuards(RolesGuard)
-    @Roles(UserRole.ADMIN)
+    @Roles(UserRole.ADMIN, UserRole.CLIENT, UserRole.DRIVER)
     create(@Body() dto: CreateOrderDto, @CurrentUser() actor: User) {
       return this.ordersService.create(dto, actor);
     }

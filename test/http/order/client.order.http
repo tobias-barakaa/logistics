@@ -1,0 +1,52 @@
+### Client creates order
+POST http://localhost:3000/api/v1/orders
+Content-Type: application/json
+Cookie: access_token=YOUR_CLIENT_TOKEN
+
+{
+  "customerName": "John Client",
+  "customerPhone": "+254700000000",
+  "customerEmail": "client@example.com",
+
+  "deliveryAddress": "Nairobi CBD, Kencom Bus Station",
+  "deliveryLandmark": "Near Hilton",
+
+  "deliveryLat": -1.286389,
+  "deliveryLng": 36.817223,
+
+  "requiresPickup": false,
+
+  "timeWindowStart": "2026-04-17T10:00:00.000Z",
+  "timeWindowEnd": "2026-04-17T14:00:00.000Z",
+
+  "priority": "normal",
+  "deliveryInstructions": "Call on arrival",
+  "isFragile": false,
+  "requiresSignature": true,
+  "requiresPhoto": true,
+
+  "subtotal": 1500,
+  "deliveryFee": 300,
+  "totalAmount": 1800,
+
+  "paymentMethod": "cash",
+
+  "items": [
+    {
+      "itemName": "Laptop",
+      "quantity": 1,
+      "unitPrice": 1500,
+      "weightKg": 2,
+      "sku": "LAP-001",
+      "notes": "Handle with care"
+    }
+  ],
+
+  "images": [
+    {
+      "imageUrl": "https://example.com/item.jpg",
+      "imageType": "package",
+      "caption": "Laptop box"
+    }
+  ]
+}
