@@ -1,7 +1,9 @@
 ### Client creates order
+@access_token =eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MWViMzhlYi01NjY0LTQ4MjUtOTgzNS03Njk1NTM5YjRkNDAiLCJlbWFpbCI6ImNsaWVudDFAZXhhbXBsZS5jb20iLCJyb2xlIjoiY2xpZW50IiwiaWF0IjoxNzc2NDI3NjYyLCJleHAiOjE3NzcwMzI0NjJ9.EE6SfvJGlVbuI6m3VkdI9V9nD9MljzaLPCeRFYsnn2g
+
 POST http://localhost:3000/api/v1/orders
 Content-Type: application/json
-Cookie: access_token=YOUR_CLIENT_TOKEN
+Cookie: access_token={{access_token}}
 
 {
   "customerName": "John Client",
@@ -16,10 +18,10 @@ Cookie: access_token=YOUR_CLIENT_TOKEN
 
   "requiresPickup": false,
 
-  "timeWindowStart": "2026-04-17T10:00:00.000Z",
-  "timeWindowEnd": "2026-04-17T14:00:00.000Z",
+  "timeWindowStart": "10:00",
+"timeWindowEnd": "14:00",
 
-  "priority": "normal",
+  "priority": "NORMAL",
   "deliveryInstructions": "Call on arrival",
   "isFragile": false,
   "requiresSignature": true,
@@ -29,7 +31,7 @@ Cookie: access_token=YOUR_CLIENT_TOKEN
   "deliveryFee": 300,
   "totalAmount": 1800,
 
-  "paymentMethod": "cash",
+  "paymentMethod": "CARD",
 
   "items": [
     {
@@ -45,8 +47,9 @@ Cookie: access_token=YOUR_CLIENT_TOKEN
   "images": [
     {
       "imageUrl": "https://example.com/item.jpg",
-      "imageType": "package",
+      "imageType": "SIGNATURE",
       "caption": "Laptop box"
     }
   ]
 }
+
