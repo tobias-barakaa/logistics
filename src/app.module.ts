@@ -40,7 +40,7 @@ import { AdminModule } from './modules/admin/admin.module';
         dropSchema: config.get<string>('DROP_SCHEMA') === 'true',
 
         ssl:
-          config.get<string>('DB_SSL') === 'true'
+          config.get<string>('DB_SSL') === 'false'
             ? { rejectUnauthorized: false }
             : false,
       }),
