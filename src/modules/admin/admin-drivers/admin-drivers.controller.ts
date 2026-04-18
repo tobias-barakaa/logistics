@@ -27,16 +27,16 @@ import { CurrentUser } from 'src/common/decorators/current-user.decorator';
   export class AdminJDriverController {
     constructor(private readonly adminService: AdminDriverService) {}
   
-    // GET /api/v1/admin/drivers
-    // GET /api/v1/admin/drivers?approvalStatus=pending
-    // GET /api/v1/admin/drivers?approvalStatus=approved
-    // GET /api/v1/admin/drivers?approvalStatus=rejected
-    @Get('drivers')
+    // // GET /api/v1/admin/drivers
+    // // GET /api/v1/admin/drivers?approvalStatus=pending
+    // // GET /api/v1/admin/drivers?approvalStatus=approved
+    // // GET /api/v1/admin/drivers?approvalStatus=rejected
+    // @Get('drivers')
     
-    listDrivers(@CurrentUser() user: User, @Query() query: ListDriversQueryDto) {
-        console.log(user)
-      return this.adminService.listDrivers(query);
-    }
+    // listDrivers(@CurrentUser() user: User, @Query() query: ListDriversQueryDto) {
+    //     console.log(user)
+    //   return this.adminService.listDrivers(query);
+    // }
   
     // GET /api/v1/admin/drivers/:id
     @Get('drivers/:id')
@@ -55,6 +55,16 @@ import { CurrentUser } from 'src/common/decorators/current-user.decorator';
   
     // PATCH /api/v1/admin/drivers/:id/reject
     // Body: { "reason": "License number could not be verified" }
+    // @Patch('drivers/:id/reject')
+    // @HttpCode(HttpStatus.OK)
+    // rejectDriver(
+    //   @Param('id', ParseUUIDPipe) id: string,
+    //   @Body() dto: RejectDriverDto,
+    // ) {
+    //   return this.adminService.rejectDriver(id, dto);
+    // }
+
+
     @Patch('drivers/:id/reject')
     @HttpCode(HttpStatus.OK)
     rejectDriver(
@@ -63,6 +73,33 @@ import { CurrentUser } from 'src/common/decorators/current-user.decorator';
     ) {
       return this.adminService.rejectDriver(id, dto);
     }
+
+
+
+    // ── Drivers ────────────────────────────────────────────────────────────────
+  
+    // GET /api/v1/admin/drivers
+    // GET /api/v1/admin/drivers?approvalStatus=pending
+    @Get('drivers')
+    listDrivers(@Query() query: ListDriversQueryDto) {
+      return this.adminService.listDrivers(query);
+    }
+  
+    // GET /api/v1/admin/drivers/:id
+    // @Get('drivers/:id')
+    // getDriver(@Param('id', ParseUUIDPipe) id: string) {
+    //   return this.adminService.getDriver(id);
+    // }
+  
+    // // PATCH /api/v1/admin/drivers/:id/approve
+    // @Patch('drivers/:id/approve')
+    // @HttpCode(HttpStatus.OK)
+    // approveDriver(@Param('id', ParseUUIDPipe) id: string) {
+    //   return this.adminService.approveDriver(id);
+    // }
+  
+    // PATCH /api/v1/admin/drivers/:id/reject
+    // Body: { "reason": "License number unverifiable" }
   }
 
 

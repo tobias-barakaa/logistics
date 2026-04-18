@@ -10,26 +10,32 @@ import {
   BeforeInsert,
 } from 'typeorm';
 import { Driver } from './driver.entity';
+import { User } from './user.entity';
 import { OrderImage } from './order-image.entity';
-import { OrderStatus } from 'src/common/enums/order-status.enum';
-import { OrderPriority } from 'src/common/enums/order-image.enum';
-import { PaymentMethod, PaymentStatus } from 'src/common/enums/payment.enum';
-import { OrderItem } from './order.item.entity';
 import { OrderStatusHistory } from './order-status-history.entity';
+import { OrderStatus } from 'src/common/enums/order-status.enum';
+import { PaymentStatus, PaymentMethod } from 'src/common/enums/payment.enum';
+import { OrderPriority } from 'src/common/enums/order-image.enum';
+import { OrderItem } from './order.item.entity';
 
 @Entity('orders')
 export class Order {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  // Human-readable identifiers
   @Column({ unique: true })
   orderNumber: string;
 
   @Column({ unique: true })
   trackingNumber: string;
 
-  // ── Customer / Receiver ─────────────────────────────────────────────────────
+  // ── Who submitted this order ─────────────────────────────────────────────────
+  // Nullable because admin can also create orders on behalf of someone
+  @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL', eager: false })
+  @JoinColumn()
+  submittedBy: User;
+
+  // ── Customer / Receiver ──────────────────────────────────────────────────────
   @Column()
   customerName: string;
 
@@ -51,7 +57,7 @@ export class Order {
   @Column({ type: 'decimal', precision: 11, scale: 8 })
   deliveryLng: number;
 
-  // ── Pickup / Sender (optional — only when requiresPickup = true) ────────────
+  // ── Pickup / Sender ──────────────────────────────────────────────────────────
   @Column({ default: false })
   requiresPickup: boolean;
 
@@ -70,18 +76,14 @@ export class Order {
   @Column({ type: 'decimal', precision: 11, scale: 8, nullable: true })
   pickupLng: number;
 
-  // ── Delivery constraints ────────────────────────────────────────────────────
+  // ── Delivery constraints ─────────────────────────────────────────────────────
   @Column({ type: 'time', nullable: true })
   timeWindowStart: string;
 
   @Column({ type: 'time', nullable: true })
   timeWindowEnd: string;
 
-  @Column({
-    type: 'enum',
-    enum: OrderPriority,
-    default: OrderPriority.NORMAL,
-  })
+  @Column({ type: 'enum', enum: OrderPriority, default: OrderPriority.NORMAL })
   priority: OrderPriority;
 
   @Column({ nullable: true, type: 'text' })
@@ -96,7 +98,7 @@ export class Order {
   @Column({ default: true })
   requiresPhoto: boolean;
 
-  // ── Financials ──────────────────────────────────────────────────────────────
+  // ── Financials ───────────────────────────────────────────────────────────────
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
   subtotal: number;
 
@@ -106,29 +108,17 @@ export class Order {
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
   totalAmount: number;
 
-  @Column({
-    type: 'enum',
-    enum: PaymentMethod,
-    default: PaymentMethod.COD,
-  })
+  @Column({ type: 'enum', enum: PaymentMethod, default: PaymentMethod.COD })
   paymentMethod: PaymentMethod;
 
-  @Column({
-    type: 'enum',
-    enum: PaymentStatus,
-    default: PaymentStatus.PENDING,
-  })
+  @Column({ type: 'enum', enum: PaymentStatus, default: PaymentStatus.PENDING })
   paymentStatus: PaymentStatus;
 
-  // ── Status ──────────────────────────────────────────────────────────────────
-  @Column({
-    type: 'enum',
-    enum: OrderStatus,
-    default: OrderStatus.PENDING,
-  })
+  // ── Status ───────────────────────────────────────────────────────────────────
+  @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PENDING })
   status: OrderStatus;
 
-  // ── Assignment ──────────────────────────────────────────────────────────────
+  // ── Assignment ───────────────────────────────────────────────────────────────
   @ManyToOne(() => Driver, (driver) => driver.orders, {
     nullable: true,
     onDelete: 'SET NULL',
@@ -139,11 +129,10 @@ export class Order {
   @Column({ type: 'timestamp', nullable: true })
   assignedAt: Date;
 
-  // Position in driver's multi-stop route for the day
   @Column({ type: 'int', nullable: true })
   routeStopOrder: number;
 
-  // ── Timestamps ──────────────────────────────────────────────────────────────
+  // ── Timestamps ───────────────────────────────────────────────────────────────
   @Column({ type: 'timestamp', nullable: true })
   estimatedDeliveryTime: Date;
 
@@ -153,7 +142,7 @@ export class Order {
   @Column({ type: 'timestamp', nullable: true })
   deliveredAt: Date;
 
-  // ── Notes ───────────────────────────────────────────────────────────────────
+  // ── Notes ────────────────────────────────────────────────────────────────────
   @Column({ nullable: true, type: 'text' })
   adminNotes: string;
 
@@ -163,14 +152,14 @@ export class Order {
   @Column({ nullable: true, type: 'text' })
   cancellationReason: string;
 
-  // ── Relations ───────────────────────────────────────────────────────────────
+  // ── Relations ────────────────────────────────────────────────────────────────
   @OneToMany(() => OrderItem, (item) => item.order, { cascade: true })
   items: OrderItem[];
 
   @OneToMany(() => OrderImage, (image) => image.order, { cascade: true })
   images: OrderImage[];
 
-  @OneToMany(() => OrderStatusHistory, (history) => history.order, { cascade: true })
+  @OneToMany(() => OrderStatusHistory, (h) => h.order, { cascade: true })
   statusHistory: OrderStatusHistory[];
 
   @CreateDateColumn()
@@ -179,7 +168,6 @@ export class Order {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  // ── Auto-generate identifiers on insert ─────────────────────────────────────
   @BeforeInsert()
   generateIdentifiers() {
     const ts = Date.now().toString(36).toUpperCase();

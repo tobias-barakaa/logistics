@@ -17,4 +17,5 @@ export enum OrderPriority {
   export enum UploadedBy {
     ADMIN = 'ADMIN',
     DRIVER = 'DRIVER',
+    CLIENT = 'CLIENT'
   }
