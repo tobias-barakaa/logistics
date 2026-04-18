@@ -23,7 +23,7 @@ import { CreateDriverProfileDto } from 'src/modules/driver/dto/create-driver-pro
       private readonly driverRepo: Repository<Driver>,
     
       @InjectRepository(Vehicle)
-      private readonly vehicleRepo: Repository<Vehicle>,
+      private readonly vehicleRepo: Repository<Vehicle>
     ) {}
   
     // ── List drivers ─────────────────────────────────────────────────────────────

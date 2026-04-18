@@ -6,6 +6,7 @@ import { Driver } from 'src/database/entities/driver.entity';
 import { OrdersModule } from 'src/modules/orders/orders.module';
 import { OrdersController } from '../orders/orders.controller';
 import { AdminJDriverController } from './admin-drivers/admin-drivers.controller';
+import { Vehicle } from 'src/database/entities/vehicle.entity';
 import { AdminDriversModule } from './admin-drivers/admin-drivers.module';
 
 @Module({
@@ -15,6 +16,7 @@ import { AdminDriversModule } from './admin-drivers/admin-drivers.module';
     OrdersModule,
     AdminDriversModule,
     
+
 
   ],
   controllers: [AdminController],
