@@ -105,19 +105,7 @@ import { UploadedBy } from 'src/common/enums/order-image.enum';
       return this.ordersService.update(id, dto);
     }
   
-    // PATCH /api/v1/orders/:id/assign
-    // Assign a driver and move status PENDING → ASSIGNED
-    @Patch(':id/assign')
-    @UseGuards(RolesGuard)
-    @Roles(UserRole.ADMIN)
-    @HttpCode(HttpStatus.OK)
-    assignDriver(
-      @Param('id', ParseUUIDPipe) id: string,
-      @Body() dto: AssignDriverDto,
-      @CurrentUser() actor: User,
-    ) {
-      return this.ordersService.assignDriver(id, dto, actor);
-    }
+    
   
     // PATCH /api/v1/orders/:id/status
     // Used by both admin and drivers to move the order through the pipeline

@@ -59,103 +59,93 @@ import { ImageType, UploadedBy } from 'src/common/enums/order-image.enum';
   
     // ── Create ────────────────────────────────────────────────────────────────────
   
+    
+
     async create(dto: CreateOrderDto, actor: User): Promise<Order> {
-      // Validate pickup completeness
-      if (dto.requiresPickup) {
-        if (!dto.pickupName || !dto.pickupAddress || !dto.pickupLat || !dto.pickupLng) {
-          throw new BadRequestException(
-            'requiresPickup is true but pickupName, pickupAddress, pickupLat, pickupLng are all required',
+        if (dto.requiresPickup) {
+          if (!dto.pickupName || !dto.pickupAddress || !dto.pickupLat || !dto.pickupLng) {
+            throw new BadRequestException(
+              'pickupName, pickupAddress, pickupLat, and pickupLng are required when requiresPickup is true',
+            );
+          }
+        }
+    
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+    
+        try {
+          const order = queryRunner.manager.create(Order, {
+            submittedBy: actor,
+            customerName: dto.customerName,
+            customerPhone: dto.customerPhone,
+            customerEmail: dto.customerEmail,
+            deliveryAddress: dto.deliveryAddress,
+            deliveryLandmark: dto.deliveryLandmark,
+            deliveryLat: dto.deliveryLat,
+            deliveryLng: dto.deliveryLng,
+            requiresPickup: dto.requiresPickup ?? false,
+            pickupName: dto.pickupName,
+            pickupAddress: dto.pickupAddress,
+            pickupLandmark: dto.pickupLandmark,
+            pickupLat: dto.pickupLat,
+            pickupLng: dto.pickupLng,
+            timeWindowStart: dto.timeWindowStart,
+            timeWindowEnd: dto.timeWindowEnd,
+            priority: dto.priority,
+            deliveryInstructions: dto.deliveryInstructions,
+            isFragile: dto.isFragile ?? false,
+            requiresSignature: dto.requiresSignature ?? true,
+            requiresPhoto: dto.requiresPhoto ?? true,
+            subtotal: dto.subtotal,
+            deliveryFee: dto.deliveryFee ?? 0,
+            totalAmount: dto.totalAmount,
+            paymentMethod: dto.paymentMethod,
+            status: OrderStatus.PENDING,
+          });
+    
+          const saved = await queryRunner.manager.save(Order, order);
+    
+          if (dto.items?.length) {
+            const items = dto.items.map((item, index) =>
+              queryRunner.manager.create(OrderItem, {
+                order: saved,
+                ...item,
+                sortOrder: index,
+              }),
+            );
+            await queryRunner.manager.save(OrderItem, items);
+          }
+    
+          if (dto.images?.length) {
+            const images = dto.images.map((img) =>
+              queryRunner.manager.create(OrderImage, {
+                order: saved,
+                ...img,
+                uploadedBy: UploadedBy.CLIENT,
+              }),
+            );
+            await queryRunner.manager.save(OrderImage, images);
+          }
+    
+          await this.writeHistory(
+            queryRunner.manager,
+            saved,
+            null,
+            OrderStatus.PENDING,
+            `${actor.role}: ${actor.name}`,
+            'Order submitted — awaiting admin review',
           );
+    
+          await queryRunner.commitTransaction();
+          return this.findOneOrFail(saved.id);
+        } catch (err) {
+          await queryRunner.rollbackTransaction();
+          throw err;
+        } finally {
+          await queryRunner.release();
         }
       }
-  
-      const queryRunner = this.dataSource.createQueryRunner();
-      await queryRunner.connect();
-      await queryRunner.startTransaction();
-  
-      try {
-        const order = queryRunner.manager.create(Order, {
-          customerName: dto.customerName,
-          customerPhone: dto.customerPhone,
-          customerEmail: dto.customerEmail,
-          deliveryAddress: dto.deliveryAddress,
-          deliveryLandmark: dto.deliveryLandmark,
-          deliveryLat: dto.deliveryLat,
-          deliveryLng: dto.deliveryLng,
-          requiresPickup: dto.requiresPickup ?? false,
-          pickupName: dto.pickupName,
-          pickupAddress: dto.pickupAddress,
-          pickupLandmark: dto.pickupLandmark,
-          pickupLat: dto.pickupLat,
-          pickupLng: dto.pickupLng,
-          timeWindowStart: dto.timeWindowStart,
-          timeWindowEnd: dto.timeWindowEnd,
-          priority: dto.priority,
-          deliveryInstructions: dto.deliveryInstructions,
-          isFragile: dto.isFragile ?? false,
-          requiresSignature: dto.requiresSignature ?? true,
-          requiresPhoto: dto.requiresPhoto ?? true,
-          subtotal: dto.subtotal,
-          deliveryFee: dto.deliveryFee ?? 0,
-          totalAmount: dto.totalAmount,
-          paymentMethod: dto.paymentMethod,
-          adminNotes: dto.adminNotes,
-          status: OrderStatus.PENDING,
-        });
-  
-        const savedOrder = await queryRunner.manager.save(Order, order);
-  
-        // Persist items
-        if (dto.items?.length) {
-          const items = dto.items.map((item, index) =>
-            queryRunner.manager.create(OrderItem, {
-              order: savedOrder,
-              itemName: item.itemName,
-              quantity: item.quantity,
-              unitPrice: item.unitPrice,
-              weightKg: item.weightKg,
-              sku: item.sku,
-              notes: item.notes,
-              sortOrder: index,
-            }),
-          );
-          await queryRunner.manager.save(OrderItem, items);
-        }
-  
-        // Persist images
-        if (dto.images?.length) {
-          const images = dto.images.map((img) =>
-            queryRunner.manager.create(OrderImage, {
-              order: savedOrder,
-              imageUrl: img.imageUrl,
-              imageType: img.imageType,
-              caption: img.caption,
-              uploadedBy: UploadedBy.ADMIN,
-            }),
-          );
-          await queryRunner.manager.save(OrderImage, images);
-        }
-  
-        // Write initial status history entry
-        await this.writeHistory(
-          queryRunner.manager,
-          savedOrder,
-          null,
-          OrderStatus.PENDING,
-          `${actor.role}: ${actor.name}`,
-          'Order created',
-        );
-  
-        await queryRunner.commitTransaction();
-  
-        return this.findOneOrFail(savedOrder.id);
-      } catch (error) {
-        await queryRunner.rollbackTransaction();
-        throw error;
-      } finally {
-        await queryRunner.release();
-      }
-    }
   
     // ── Read ──────────────────────────────────────────────────────────────────────
   

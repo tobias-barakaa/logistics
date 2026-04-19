@@ -53,6 +53,21 @@ import { AdminAddNoteDto, AdminCancelOrderDto, AdminListOrdersDto, ListDriversQu
     listPendingOrders() {
       return this.adminService.listPendingOrders();
     }
+
+
+    // PATCH /api/v1/orders/:id/assign
+        // Assign a driver and move status PENDING → ASSIGNED
+        @Patch(':id/assign')
+        @UseGuards(RolesGuard)
+        @Roles(UserRole.ADMIN)
+        @HttpCode(HttpStatus.OK)
+        assignDriver(
+          @Param('id', ParseUUIDPipe) id: string,
+          @Body() dto: AssignDriverDto,
+          @CurrentUser() actor: User,
+        ) {
+          return this.ordersService.assignDriver(id, dto, actor);
+        }
   
     // GET /api/v1/admin/orders/track/:trackingNumber
     @Get('orders/track/:trackingNumber')
