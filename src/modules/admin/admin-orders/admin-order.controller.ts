@@ -21,10 +21,10 @@ export class OrdersController {
   // POST /api/v1/orders
   // Any logged-in user — client, driver, or admin — can submit an order.
   // It lands as PENDING and sits in the admin queue for review.
-  @Post()
-  create(@Body() dto: CreateOrderDto, @CurrentUser() actor: User) {
-    return this.ordersService.create(dto, actor);
-  }
+  // @Post()
+  // create(@Body() dto: CreateOrderDto, @CurrentUser() actor: User) {
+  //   return this.ordersService.create(dto, actor);
+  // }
 
   // GET /api/v1/orders/my-orders
   // Each user only sees orders they personally submitted.
