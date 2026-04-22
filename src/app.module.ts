@@ -10,8 +10,6 @@ import { RoutingModule } from './modules/routing/routing.module';
 import { TrackingModule } from './modules/tracking/tracking.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
-import { DriversModule } from './drivers/drivers.module';
-import { AdminDriversModule } from './modules/admin/admin-drivers/admin-drivers.module';
 import { AdminModule } from './modules/admin/admin.module';
 // import { AdminModule } from './modules/admin/admin.module';
 // import { AdminDriversModule } from './admin/admin-drivers/admin-drivers.module';
@@ -37,7 +35,7 @@ import { AdminModule } from './modules/admin/admin.module';
         logging: config.get<string>('NODE_ENV') === 'development',
         // Neon requires SSL
 
-        dropSchema: config.get<string>('DROP_SCHEMA') === 'true',
+        dropSchema: config.get<string>('DROP_SCHEMA') === 'false',
 
         ssl:
           config.get<string>('DB_SSL') === 'false'

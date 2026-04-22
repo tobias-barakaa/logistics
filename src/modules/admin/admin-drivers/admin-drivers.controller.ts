@@ -54,6 +54,11 @@ import { CreateDriverProfileDto } from 'src/modules/driver/dto/create-driver-pro
       return this.adminService.createDriverProfile(user, dto);
     }
 
+    @Get('drivers')
+    listDrivers(@Query() query: ListDriversQueryDto) {
+      return this.adminService.listDrivers(query);
+    }
+
 
    
   }

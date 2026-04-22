@@ -11,7 +11,7 @@ import {
   import { OrdersService } from 'src/modules/orders/orders.service';
   import { User } from 'src/database/entities/user.entity';
   import { OrderStatus } from 'src/common/enums/order-status.enum';
-  import { AssignDriverDto } from 'src/modules/orders/dto/orders.dto';
+  import { AssignDriverDto, FilterOrdersDto } from 'src/modules/orders/dto/orders.dto';
 import { AdminAddNoteDto, AdminCancelOrderDto, AdminListOrdersDto, ListDriversQueryDto, RejectDriverDto } from './admin.dto';
 import { Order } from 'src/database/entities/order.entity';
   
@@ -21,6 +21,11 @@ import { Order } from 'src/database/entities/order.entity';
       @InjectRepository(Driver)
       private readonly driverRepository: Repository<Driver>,
       private readonly ordersService: OrdersService,
+
+      @InjectRepository(Order)
+      private readonly orderRepository: Repository<Order>,
+
+      
     ) {}
   
     // ── Dashboard ──────────────────────────────────────────────────────────────
@@ -56,14 +61,58 @@ import { Order } from 'src/database/entities/order.entity';
     
   // ── Orders: read ───────────────────────────────────────────────────────────
  
-  async listOrders(query: AdminListOrdersDto) {
-    return this.ordersService.findAll(query);
-  }
+
+
+   async findAll(filters: FilterOrdersDto): Promise<{ data: Order[]; total: number; page: number; limit: number }> {
+        const page = filters.page ?? 1;
+        const limit = filters.limit ?? 20;
+        const skip = (page - 1) * limit;
+    
+        const qb = this.orderRepository
+          .createQueryBuilder('order')
+          .leftJoinAndSelect('order.driver', 'driver')
+          .leftJoinAndSelect('driver.user', 'driverUser')
+          .leftJoinAndSelect('order.items', 'items')
+          .leftJoinAndSelect('order.images', 'images')
+          .orderBy('order.createdAt', 'DESC')
+          .skip(skip)
+          .take(limit);
+    
+        if (filters.status) {
+          qb.andWhere('order.status = :status', { status: filters.status });
+        }
+    
+        if (filters.driverId) {
+          qb.andWhere('driver.id = :driverId', { driverId: filters.driverId });
+        }
+    
+        if (filters.priority) {
+          qb.andWhere('order.priority = :priority', { priority: filters.priority });
+        }
+    
+        if (filters.search) {
+          qb.andWhere(
+            '(order.orderNumber ILIKE :s OR order.trackingNumber ILIKE :s OR order.customerName ILIKE :s OR order.customerPhone ILIKE :s)',
+            { s: `%${filters.search}%` },
+          );
+        }
+    
+        if (filters.dateFrom) {
+          qb.andWhere('order.createdAt >= :dateFrom', { dateFrom: new Date(filters.dateFrom) });
+        }
+    
+        if (filters.dateTo) {
+          qb.andWhere('order.createdAt <= :dateTo', { dateTo: new Date(filters.dateTo) });
+        }
+    
+        const [data, total] = await qb.getManyAndCount();
+        return { data, total, page, limit };
+      }
  
   // Convenience shortcut — admin lands here first when they open Orders
-  async listPendingOrders() {
-    return this.ordersService.findAll({ status: OrderStatus.PENDING, limit: 50 });
-  }
+  // async listPendingOrders() {
+  //   return this.ordersService.findAll({ status: OrderStatus.PENDING, limit: 50 });
+  // }
  
   async getOrder(orderId: string) {
     return this.ordersService.findOne(orderId);

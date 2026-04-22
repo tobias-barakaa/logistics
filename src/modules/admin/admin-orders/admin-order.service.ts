@@ -423,18 +423,7 @@ export class AdminOrdersService {
 
 
  
-  async listDrivers(query: ListDriversQueryDto) {
-    const where = query.approvalStatus ? { approvalStatus: query.approvalStatus } : {};
- 
-    const drivers = await this.driverRepository.find({
-      where,
-      relations: ['user', 'vehicle'],
-      order: { createdAt: 'DESC' },
-    });
- 
-    return drivers.map((d) => this.toSafeDriver(d));
-  }
- 
+  
   async getDriver(driverId: string) {
     return this.toSafeDriver(await this.findDriverOrFail(driverId));
   }

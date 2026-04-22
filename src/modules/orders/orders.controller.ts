@@ -54,12 +54,7 @@ import { UploadedBy } from 'src/common/enums/order-image.enum';
     // GET /api/v1/orders?status=IN_TRANSIT&driverId=xxx
     // GET /api/v1/orders?search=ORD-ABC&dateFrom=2026-01-01&dateTo=2026-12-31
     // GET /api/v1/orders?page=2&limit=10
-    @Get()
-    @UseGuards(RolesGuard)
-    @Roles(UserRole.ADMIN)
-    findAll(@Query() filters: FilterOrdersDto) {
-      return this.ordersService.findAll(filters);
-    }
+   
   
     // GET /api/v1/orders/stats/today
     @Get('stats/today')

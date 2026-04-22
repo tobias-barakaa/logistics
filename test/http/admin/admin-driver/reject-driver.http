@@ -1,5 +1,6 @@
 @baseUrl = http://localhost:3000/api/v1
-@access_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNWQ5NTUwYS1jZmI3LTQxNjUtODg2MC1iZjVlYzI5ZTVkNjEiLCJlbWFpbCI6InRvYmlhc2JhcmFrYW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc2MzMwNzg0LCJleHAiOjE3NzY5MzU1ODR9.wNquPY2vZK0esHvEEbzxA4vAavi_mO2iRu1LlaRNxfQ
+@access_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiNjRiMGYzZi0xNGM3LTRlNzAtOGY2Ny0xMDIwZTNmZThkNDYiLCJlbWFpbCI6InRvYmlhc2JhcmFrYWhAZ21haWwuY29tIiwicm9sZSI6ImRyaXZlciIsImlhdCI6MTc3Njg1NDgzMCwiZXhwIjoxNzc3NDU5NjMwfQ.Wt2OYorP0PXoVQ2z0vH_R7_2_83WUZzHj13t83KcUT4
+
 @driverId = a17c6e00-92b8-406f-a94c-57ab373b7789
 ### Get all drivers
 PATCH {{baseUrl}}/admin/drivers/{{driverId}}/reject

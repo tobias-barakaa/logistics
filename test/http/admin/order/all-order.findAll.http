@@ -1,0 +1,7 @@
+### =========================================
+### Admin - Get all orders (no filters)
+### =========================================
+@access_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYzQ4MzY5Yy00ODkyLTRlOTAtYTg4My1jZjg3ODNjZDNjN2UiLCJlbWFpbCI6InRvYmlhc2JhcmFrYW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc2ODU1ODc1LCJleHAiOjE3Nzc0NjA2NzV9.PwyaCgGwS65m6teE88sn5Qq32lCNGzL-CSiGiZ0HooQ; access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5ZTVkNDVjYi0yNmU4LTQ0YTktYjAyYS05ZTM5ZWUyOGNlOTYiLCJlbWFpbCI6ImNsaWVudDFAZXhhbXBsZS5jb20iLCJyb2xlIjoiY2xpZW50IiwiaWF0IjoxNzc2ODU1OTE2LCJleHAiOjE3Nzc0NjA3MTZ9.SCG2_4AyK8-qACreAl7O-iLMGhuRPUej5c7Es9Dd6PM
+
+GET http://localhost:3000/api/v1/admin/orders
+Cookie: access_token={{access_token}}

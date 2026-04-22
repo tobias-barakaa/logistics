@@ -125,14 +125,17 @@ import { OrderStatus } from 'src/common/enums/order-status.enum';
 
 
 
-    async listOrders(query: AdminListOrdersDto) {
-      return this.ordersService.findAll(query);
-    }
+    // async listOrders(query: AdminListOrdersDto) {
+    //   return this.ordersService.findAll(query);
+    // }
+
+    
+   
   
-    // Convenience shortcut — admin lands here first when they open Orders
-    async listPendingOrders() {
-      return this.ordersService.findAll({ status: OrderStatus.PENDING, limit: 50 });
-    }
+    // // Convenience shortcut — admin lands here first when they open Orders
+    // async listPendingOrders() {
+    //   return this.ordersService.findAll({ status: OrderStatus.PENDING, limit: 50 });
+    // }
   
     async getOrder(orderId: string) {
       return this.ordersService.findOne(orderId);

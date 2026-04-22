@@ -114,10 +114,10 @@ export class OrdersController {
     
       // GET /api/v1/admin/drivers
       // GET /api/v1/admin/drivers?approvalStatus=pending
-      @Get('drivers')
-      listDrivers(@Query() query: ListDriversQueryDto) {
-        return this.ordersService.listDrivers(query);
-      }
+      // @Get('drivers')
+      // listDrivers(@Query() query: ListDriversQueryDto) {
+      //   return this.ordersService.listDrivers(query);
+      // }
     
       // GET /api/v1/admin/drivers/:id
       @Get('drivers/:id')

@@ -149,51 +149,7 @@ import { ImageType, UploadedBy } from 'src/common/enums/order-image.enum';
   
     // ── Read ──────────────────────────────────────────────────────────────────────
   
-    async findAll(filters: FilterOrdersDto): Promise<{ data: Order[]; total: number; page: number; limit: number }> {
-      const page = filters.page ?? 1;
-      const limit = filters.limit ?? 20;
-      const skip = (page - 1) * limit;
-  
-      const qb = this.orderRepository
-        .createQueryBuilder('order')
-        .leftJoinAndSelect('order.driver', 'driver')
-        .leftJoinAndSelect('driver.user', 'driverUser')
-        .leftJoinAndSelect('order.items', 'items')
-        .leftJoinAndSelect('order.images', 'images')
-        .orderBy('order.createdAt', 'DESC')
-        .skip(skip)
-        .take(limit);
-  
-      if (filters.status) {
-        qb.andWhere('order.status = :status', { status: filters.status });
-      }
-  
-      if (filters.driverId) {
-        qb.andWhere('driver.id = :driverId', { driverId: filters.driverId });
-      }
-  
-      if (filters.priority) {
-        qb.andWhere('order.priority = :priority', { priority: filters.priority });
-      }
-  
-      if (filters.search) {
-        qb.andWhere(
-          '(order.orderNumber ILIKE :s OR order.trackingNumber ILIKE :s OR order.customerName ILIKE :s OR order.customerPhone ILIKE :s)',
-          { s: `%${filters.search}%` },
-        );
-      }
-  
-      if (filters.dateFrom) {
-        qb.andWhere('order.createdAt >= :dateFrom', { dateFrom: new Date(filters.dateFrom) });
-      }
-  
-      if (filters.dateTo) {
-        qb.andWhere('order.createdAt <= :dateTo', { dateTo: new Date(filters.dateTo) });
-      }
-  
-      const [data, total] = await qb.getManyAndCount();
-      return { data, total, page, limit };
-    }
+   
   
     async findOne(id: string): Promise<Order> {
       return this.findOneOrFail(id);
