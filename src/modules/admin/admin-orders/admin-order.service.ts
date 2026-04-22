@@ -3,6 +3,7 @@ import {
   NotFoundException,
   BadRequestException,
   ForbiddenException,
+  ConflictException,
 } from '@nestjs/common';
 import {
   InjectRepository,
@@ -21,6 +22,7 @@ import { DriverApprovalStatus } from 'src/common/enums/driver-approval.enum';
 import { ImageType, UploadedBy } from 'src/common/enums/order-image.enum';
 import { OrderItem } from 'src/database/entities/order.item.entity';
 import { AssignDriverDto, CancelOrderDto, CreateOrderDto, CreateOrderImageDto, CreateOrderItemDto, FilterOrdersDto, UpdateOrderDto, UpdateOrderStatusDto } from 'src/modules/orders/dto/orders.dto';
+import { ListDriversQueryDto, RejectDriverDto } from '../admin.dto';
 
 const ORDER_RELATIONS = [
   'submittedBy',
@@ -418,4 +420,69 @@ export class AdminOrdersService {
       }),
     );
   }
+
+
+ 
+  async listDrivers(query: ListDriversQueryDto) {
+    const where = query.approvalStatus ? { approvalStatus: query.approvalStatus } : {};
+ 
+    const drivers = await this.driverRepository.find({
+      where,
+      relations: ['user', 'vehicle'],
+      order: { createdAt: 'DESC' },
+    });
+ 
+    return drivers.map((d) => this.toSafeDriver(d));
+  }
+ 
+  async getDriver(driverId: string) {
+    return this.toSafeDriver(await this.findDriverOrFail(driverId));
+  }
+ 
+  async approveDriver(driverId: string) {
+    const driver = await this.findDriverOrFail(driverId);
+ 
+    if (driver.approvalStatus === DriverApprovalStatus.APPROVED) {
+      throw new ConflictException('Driver is already approved');
+    }
+ 
+    driver.approvalStatus = DriverApprovalStatus.APPROVED;
+    driver.rejectionReason = null;
+ 
+    return this.toSafeDriver(await this.driverRepository.save(driver));
+  }
+ 
+  async rejectDriver(driverId: string, dto: RejectDriverDto) {
+    const driver = await this.findDriverOrFail(driverId);
+ 
+    if (driver.approvalStatus === DriverApprovalStatus.REJECTED) {
+      throw new ConflictException('Driver is already rejected');
+    }
+ 
+    driver.approvalStatus = DriverApprovalStatus.REJECTED;
+    driver.rejectionReason = dto.reason;
+ 
+    return this.toSafeDriver(await this.driverRepository.save(driver));
+  }
+ 
+  // ── Private ────────────────────────────────────────────────────────────────
+ 
+  private async findDriverOrFail(id: string): Promise<Driver> {
+    const driver = await this.driverRepository.findOne({
+      where: { id },
+      relations: ['user', 'vehicle'],
+    });
+    if (!driver) throw new NotFoundException(`Driver "${id}" not found`);
+    return driver;
+  }
+ 
+  private toSafeDriver(driver: Driver) {
+    const { user, ...rest } = driver;
+    if (user) {
+      const { password, ...safeUser } = user as any;
+      return { ...rest, user: safeUser };
+    }
+    return rest;
+  }
+
 }

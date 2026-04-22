@@ -53,87 +53,55 @@ import { Order } from 'src/database/entities/order.entity';
       };
     }
   
-    // ── Orders: read ───────────────────────────────────────────────────────────
-  
     
-
-    // async listDrivers(query: ListDriversQueryDto) {
-    //   const where: any = {};
-    
-    //   if (query.approvalStatus) {
-    //     where.approvalStatus = query.approvalStatus;
-    //   }
-    
-    //   const drivers = await this.driverRepository.find({
-    //     where,
-    //     relations: ['user', 'vehicle'],
-    //     order: { createdAt: 'DESC' },
-    //   });
-    
-    //   return drivers.map((d) => this.toSafeDriver(d));
-    // }
-
-  // // ── Approve ───────────────────────────────────────────────────────────────────
-
-  // async approveDriver(driverId: string) {
-  //   const driver = await this.findDriverOrFail(driverId);
-
-  //   if (driver.approvalStatus === DriverApprovalStatus.APPROVED) {
-  //     throw new ConflictException('Driver is already approved');
+  // ── Orders: read ───────────────────────────────────────────────────────────
+ 
+  async listOrders(query: AdminListOrdersDto) {
+    return this.ordersService.findAll(query);
+  }
+ 
+  // Convenience shortcut — admin lands here first when they open Orders
+  async listPendingOrders() {
+    return this.ordersService.findAll({ status: OrderStatus.PENDING, limit: 50 });
+  }
+ 
+  async getOrder(orderId: string) {
+    return this.ordersService.findOne(orderId);
+  }
+ 
+  async findByTracking(trackingNumber: string) {
+    return this.ordersService.findByTracking(trackingNumber);
+  }
+ 
+  // ── Orders: actions ────────────────────────────────────────────────────────
+ 
+  // async assignDriver(orderId: string, dto: AssignDriverDto, actor: User) {
+  //   // Guard: only PENDING orders can be assigned
+  //   const order = await this.ordersService.findOneOrFail(orderId);
+ 
+  //   if (order.status !== OrderStatus.PENDING) {
+  //     throw new BadRequestException(
+  //       `Only PENDING orders can be assigned. This order is "${order.status}"`,
+  //     );
   //   }
-
-  //   driver.approvalStatus = DriverApprovalStatus.APPROVED;
-  //   driver.rejectionReason = null; // clear any previous rejection reason
-
-  //   const saved = await this.driverRepository.save(driver);
-  //   return this.toSafeDriver(saved);
+ 
+  //   return this.ordersService.assignDriver(orderId, dto, actor);
   // }
-
-  // // ── Reject ────────────────────────────────────────────────────────────────────
-
-  // async rejectDriver(driverId: string, dto: RejectDriverDto) {
-  //   const driver = await this.findDriverOrFail(driverId);
-
-  //   if (driver.approvalStatus === DriverApprovalStatus.REJECTED) {
-  //     throw new ConflictException('Driver is already rejected');
-  //   }
-
-  //   driver.approvalStatus = DriverApprovalStatus.REJECTED;
-  //   driver.rejectionReason = dto.reason;
-
-  //   const saved = await this.driverRepository.save(driver);
-  //   return this.toSafeDriver(saved);
+ 
+  // async cancelOrder(orderId: string, dto: AdminCancelOrderDto, actor: User) {
+  //   return this.ordersService.cancel(orderId, { reason: dto.reason }, actor);
   // }
-
-  // // ── Get single driver (admin view) ───────────────────────────────────────────
-
-  // async getDriver(driverId: string) {
-  //   const driver = await this.findDriverOrFail(driverId);
-  //   return this.toSafeDriver(driver);
-  // }
-
-  // // ── Helpers ───────────────────────────────────────────────────────────────────
-
-  // private async findDriverOrFail(driverId: string): Promise<Driver> {
-  //   const driver = await this.driverRepository.findOne({
-  //     where: { id: driverId },
-  //     relations: ['user', 'vehicle'],
-  //   });
-
-  //   if (!driver) {
-  //     throw new NotFoundException(`Driver with id "${driverId}" not found`);
-  //   }
-
-  //   return driver;
-  // }
-
-  // // Strip the password off the nested user before sending to frontend
-  // private toSafeDriver(driver: Driver) {
-  //   const { user, ...rest } = driver;
-  //   if (user) {
-  //     const { password, ...safeUser } = user as any;
-  //     return { ...rest, user: safeUser };
-  //   }
-  //   return rest;
+ 
+  // async addAdminNote(orderId: string, dto: AdminAddNoteDto, actor: User) {
+  //   const order = await this.ordersService.findOneOrFail(orderId);
+ 
+  //   // Append note with timestamp so the history is readable
+  //   const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 16);
+  //   const newNote = `[${timestamp} — ${actor.name}] ${dto.note}`;
+  //   const updatedNotes = order.adminNotes
+  //     ? `${order.adminNotes}\n${newNote}`
+  //     : newNote;
+ 
+  //   return this.ordersService.update(orderId, { adminNotes: updatedNotes }, actor);
   // }
   }

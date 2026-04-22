@@ -8,11 +8,13 @@ import { OrdersController } from '../orders/orders.controller';
 import { AdminJDriverController } from './admin-drivers/admin-drivers.controller';
 import { Vehicle } from 'src/database/entities/vehicle.entity';
 import { AdminDriversModule } from './admin-drivers/admin-drivers.module';
+import { AdminOrderModule } from './admin-orders/admin-order.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Driver]),
     // OrdersModule exports OrdersService so AdminService can inject it
+    AdminOrderModule,
     OrdersModule,
     AdminDriversModule,
     

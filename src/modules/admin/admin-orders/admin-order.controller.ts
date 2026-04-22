@@ -4,12 +4,21 @@ import {
   Post,
   Body,
   UseGuards,
+  Query,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
-import { User } from 'src/database/entities/user.entity';
-import { CreateOrderDto } from 'src/modules/orders/dto/orders.dto';
+import { User, UserRole } from 'src/database/entities/user.entity';
+import { AssignDriverDto, CreateOrderDto } from 'src/modules/orders/dto/orders.dto';
 import { AdminOrdersService } from './admin-order.service';
+import { AdminListOrdersDto, ListDriversQueryDto, RejectDriverDto } from '../admin.dto';
+import { RolesGuard } from 'src/common/guards';
+import { Roles } from 'src/common/decorators/roles.decorator';
 
 // This controller handles what any authenticated user can do with orders.
 // Admin management (list all, assign, cancel, status) lives in AdminController.
@@ -38,30 +47,8 @@ export class OrdersController {
   // Intentionally placed in the public orders controller, not admin.
 
 
-   // GET /api/v1/admin/overview
-      // First call the admin dashboard makes — drivers summary + today's order stats
-      @Get('overview')
-      getOverview() {
-        return this.adminService.getDashboardOverview();
-      }
     
-      // ── Orders ─────────────────────────────────────────────────────────────────
-    
-      // GET /api/v1/admin/orders
-      // GET /api/v1/admin/orders?status=PENDING
-      // GET /api/v1/admin/orders?status=ASSIGNED&driverId=xxx
-      // GET /api/v1/admin/orders?search=John&dateFrom=2026-04-01&page=1&limit=20
-      @Get('orders')
-      listOrders(@Query() query: AdminListOrdersDto) {
-        return this.adminService.listOrders(query);
-      }
-    
-      // GET /api/v1/admin/orders/pending
-      // Shortcut — this is what the admin sees the moment they open the orders page
-      @Get('orders/pending')
-      listPendingOrders() {
-        return this.adminService.listPendingOrders();
-      }
+     
   
   
       // PATCH /api/v1/orders/:id/assign
@@ -81,15 +68,10 @@ export class OrdersController {
       // GET /api/v1/admin/orders/track/:trackingNumber
       @Get('orders/track/:trackingNumber')
       findByTracking(@Param('trackingNumber') trackingNumber: string) {
-        return this.adminService.findByTracking(trackingNumber);
+        return this.ordersService.findByTracking(trackingNumber);
       }
     
-      // GET /api/v1/admin/orders/:id
-      // Full order detail — includes items, images, statusHistory, submittedBy user
-      @Get('orders/:id')
-      getOrder(@Param('id', ParseUUIDPipe) id: string) {
-        return this.adminService.getOrder(id);
-      }
+     
     
       // PATCH /api/v1/admin/orders/:id/assign
       // Body: { "driverId": "uuid", "estimatedDeliveryTime": "2026-04-18T14:00:00Z" }
@@ -101,7 +83,7 @@ export class OrdersController {
       //   @Body() dto: AssignDriverDto,
       //   @CurrentUser() actor: User,
       // ) {
-      //   return this.adminService.assignDriver(id, dto, actor);
+      //   return this.ordersService.assignDriver(id, dto, actor);
       // }
     
       // // PATCH /api/v1/admin/orders/:id/cancel
@@ -113,7 +95,7 @@ export class OrdersController {
       //   @Body() dto: AdminCancelOrderDto,
       //   @CurrentUser() actor: User,
       // ) {
-      //   return this.adminService.cancelOrder(id, dto, actor);
+      //   return this.ordersService.cancelOrder(id, dto, actor);
       // }
     
       // // POST /api/v1/admin/orders/:id/notes
@@ -125,7 +107,7 @@ export class OrdersController {
       //   @Body() dto: AdminAddNoteDto,
       //   @CurrentUser() actor: User,
       // ) {
-      //   return this.adminService.addAdminNote(id, dto, actor);
+      //   return this.ordersService.addAdminNote(id, dto, actor);
       // }
     
       // ── Drivers ────────────────────────────────────────────────────────────────
@@ -134,20 +116,20 @@ export class OrdersController {
       // GET /api/v1/admin/drivers?approvalStatus=pending
       @Get('drivers')
       listDrivers(@Query() query: ListDriversQueryDto) {
-        return this.adminService.listDrivers(query);
+        return this.ordersService.listDrivers(query);
       }
     
       // GET /api/v1/admin/drivers/:id
       @Get('drivers/:id')
       getDriver(@Param('id', ParseUUIDPipe) id: string) {
-        return this.adminService.getDriver(id);
+        return this.ordersService.getDriver(id);
       }
     
       // PATCH /api/v1/admin/drivers/:id/approve
       @Patch('drivers/:id/approve')
       @HttpCode(HttpStatus.OK)
       approveDriver(@Param('id', ParseUUIDPipe) id: string) {
-        return this.adminService.approveDriver(id);
+        return this.ordersService.approveDriver(id);
       }
     
       // PATCH /api/v1/admin/drivers/:id/reject
@@ -158,6 +140,6 @@ export class OrdersController {
         @Param('id', ParseUUIDPipe) id: string,
         @Body() dto: RejectDriverDto,
       ) {
-        return this.adminService.rejectDriver(id, dto);
+        return this.ordersService.rejectDriver(id, dto);
       }
 }
