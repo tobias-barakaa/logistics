@@ -1,0 +1,15 @@
+### Admin creates vehicle
+@access_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYzQ4MzY5Yy00ODkyLTRlOTAtYTg4My1jZjg3ODNjZDNjN2UiLCJlbWFpbCI6InRvYmlhc2JhcmFrYW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc2ODU1ODc1LCJleHAiOjE3Nzc0NjA2NzV9.PwyaCgGwS65m6teE88sn5Qq32lCNGzL-CSiGiZ0HooQ; access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYzQ4MzY5Yy00ODkyLTRlOTAtYTg4My1jZjg3ODNjZDNjN2UiLCJlbWFpbCI6InRvYmlhc2JhcmFrYW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc2ODU5MDQ4LCJleHAiOjE3Nzc0NjM4NDh9.2jrJ5LaqXlAlWYu5fiuRev9jMK_WhuX81RpH4hqMTZQ
+
+
+POST http://localhost:3000/api/v1/vehicles
+Content-Type: application/json
+Cookie: access_token={{access_token}}
+
+{
+  "plateNumber": "KDA 456B",
+  "model": "Toyota Hiace",
+  "type": "van",
+  "capacityKg": 1200,
+  "year": 2021
+}

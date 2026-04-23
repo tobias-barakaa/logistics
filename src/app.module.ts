@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './modules/auth/auth.module';
 import { CustomersModule } from './modules/customers/customers.module';
 import { DriverModule } from './modules/driver/driver.module';
-import { VehiclesModule } from './modules/vehicles/vehicles.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { RoutingModule } from './modules/routing/routing.module';
 import { TrackingModule } from './modules/tracking/tracking.module';
@@ -47,7 +46,6 @@ import { AdminModule } from './modules/admin/admin.module';
     AuthModule,
     CustomersModule,
     DriverModule,
-    VehiclesModule,
     OrdersModule,
     RoutingModule,
     TrackingModule,

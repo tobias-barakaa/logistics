@@ -10,6 +10,7 @@ import { Vehicle } from 'src/database/entities/vehicle.entity';
 import { AdminDriversModule } from './admin-drivers/admin-drivers.module';
 import { AdminOrderModule } from './admin-orders/admin-order.module';
 import { Order } from 'src/database/entities/order.entity';
+import { VehiclesModule } from './vehicle/dto/vehicles.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { Order } from 'src/database/entities/order.entity';
     AdminOrderModule,
     OrdersModule,
     AdminDriversModule,
+    VehiclesModule
     
 
 
